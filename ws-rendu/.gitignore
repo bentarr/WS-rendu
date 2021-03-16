@@ -1,2 +1,3 @@
 node_modules/
-.server/server-config.js
+server/server-config.js
+server/local-data.js
