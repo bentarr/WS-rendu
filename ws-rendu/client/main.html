@@ -11,7 +11,11 @@
 <template name='home'>
   <h1>Movies list</h1>
   {{ #each movies }}
-    <h3>{{ title }}</h3>
+  <img src="https://www.themoviedb.org/t/p/w440_and_h660_face{{poster_path}}">
+    <h3>{{ original_title }}</h3>
     <li>{{ overview }}</li>
+    <br>
+    <hr>
+    <br>
   {{ /each }}
 </template>
