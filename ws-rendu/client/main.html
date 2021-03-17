@@ -4,18 +4,20 @@
 
 <body>
   <h1>[EPSI] Application utilisant un web service</h1>
-  <hr>
   {{> home}}
 </body>
 
 <template name='home'>
-  <h1>Movies list</h1>
+  <h1 id="list">Movies list</h1>
   {{ #each movies }}
-  <img src="https://www.themoviedb.org/t/p/w440_and_h660_face{{poster_path}}">
-    <h3>{{ original_title }}</h3>
-    <li>{{ overview }}</li>
-    <br>
-    <hr>
-    <br>
+  <div class="row container">
+    <div class="col-3">
+      <img src="https://www.themoviedb.org/t/p/w440_and_h660_face{{poster_path}}">
+    </div>
+    <div class="col-9 text">
+      <h3>{{ original_title }}</h3>
+      <li>{{ overview }}</li>
+    </div>
+  </div>
   {{ /each }}
 </template>
