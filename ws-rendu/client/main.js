@@ -13,9 +13,7 @@ Template.home.onCreated(function homeOnCreated() {
     'http://localhost:3000/api/discover/movies',
     {},
     (error, response) => {
-      ctrl.movies.set(
-        JSON.parse(response.content).results
-      )
+      ctrl.movies.set(JSON.parse(response.content).results)
     }
   );
 });
@@ -25,3 +23,28 @@ Template.home.helpers({
     return Template.instance().movies.get()
   }
 });
+
+Template.home.events({
+  'click button'(event, instance) {
+    const idMovie = event.currentTarget.dataset.id;
+    updateLikeMovie(idMovie, Template.instance().movies);
+  }
+});
+
+function updateLikeMovie(idMovie, movies) {
+  HTTP.call(
+    'PUT', 
+    'http://localhost:3000/api/like/' + idMovie,
+    {},
+    (error, response) => {
+      let index = movies.get().findIndex(
+        () => { return JSON.parse(response.content).id; }
+      );
+      if (index >= 0) {
+        let moviesList = movies.get();
+        moviesList[index].like = JSON.parse(response.content).like;
+        movies.set(moviesList);
+      }
+    } 
+  )
+}
