@@ -38,13 +38,11 @@ function updateLikeMovie(idMovie, movies) {
     {},
     (error, response) => {
       let index = movies.get().findIndex(
-        () => { return JSON.parse(response.content).id; }
+        (item) => { return item.id === JSON.parse(response.content).id; }
       );
-      if (index >= 0) {
-        let moviesList = movies.get();
-        moviesList[index].like = JSON.parse(response.content).like;
-        movies.set(moviesList);
-      }
+      let moviesList = movies.get();
+      moviesList[index].like = JSON.parse(response.content).like;
+      movies.set(moviesList);
     } 
   )
 }
