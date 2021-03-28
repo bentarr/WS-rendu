@@ -4,31 +4,33 @@ import { HTTP } from 'meteor/http';
 
 import './main.html';
 
+var movies = new ReactiveVar();
+var page = new ReactiveVar(1);
+
 // [Template] Films
 
 Template.films.onCreated(function filmsOnCreated() {
-  this.movies = new ReactiveVar()
 
   HTTP.call(
     'GET',
     'http://localhost:3000/api/discover/movies',
     {},
     (error, response) => {
-      this.movies.set(JSON.parse(response.content).results)
+      movies.set(JSON.parse(response.content).results)
     }
   );
 });
 
 Template.films.helpers({
   movies() {
-    return Template.instance().movies.get()
+    return movies.get()
   }
 });
 
 Template.films.events({
   'click button'(event, instance) {
     const idMovie = event.currentTarget.dataset.id;
-    updateLikeMovie(idMovie, Template.instance().movies);
+    updateLikeMovie(idMovie, movies);
   }
 });
 
@@ -50,13 +52,37 @@ function updateLikeMovie(idMovie, movies) {
 
 // [Template] Pagination
 
-Template.pagination.onCreated(function paginationOnCreated() {
-  this.page = new ReactiveVar(1);
-});
-
-
 Template.pagination.helpers({
   page() {
-    return Template.instance().page.get()
+    return page.get()
+  }
+});
+
+Template.pagination.events({
+  'click #pagePrecedente'() {
+    if (page.get() > 1) {
+      page.set(page.get() - 1);
+      HTTP.call(
+        'GET',
+        'http://localhost:3000/api/page/' + page.get(),
+        {},
+        (error, response) => {
+          movies.set(JSON.parse(response.content).results);
+        }
+      );
+    }
+  },
+  'click #pageSuivante'() {
+    if (page.get() < 500) {
+      page.set(page.get() + 1);
+      HTTP.call(
+        'GET',
+        'http://localhost:3000/api/page/' + page.get(),
+        {},
+        (error, response) => {
+          movies.set(JSON.parse(response.content).results);
+        }
+      );
+    }
   }
 });

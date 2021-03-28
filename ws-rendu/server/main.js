@@ -46,6 +46,23 @@ WebApp.connectHandlers.use('/api/like', (req, res, next) => {
   }
 );
 
+WebApp.connectHandlers.use('/api/page', (req, res, next) => {
+  HTTP.call(
+    'GET', 
+    urlDeBase + '&page=' + req.url.split('/')[1],
+    {},
+    (error, response) => {
+      let newResp = response.data;
+      newResp.results.forEach((movie) => {
+        let resource = Like.findOne({ id: movie.id });
+        movie.like = resource ? resource.like : 0;
+      });
+      res.writeHead(200);
+      res.end(JSON.stringify(newResp));
+    }
+  );
+});
+
 function updateLikeMovie(idMovie) {
   let resource = Like.findOne({ id: idMovie });
   if (resource) {

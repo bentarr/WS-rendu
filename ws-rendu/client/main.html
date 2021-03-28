@@ -23,7 +23,7 @@
     {{ #each movies }}
     <div class='col-md-3'>
       <div class="card bg-light mb-3">
-        <h3 class='card-header'>{{ original_title }}</h3>
+        <h3 class='card-header'>{{ title }}</h3>
         <div style='margin-top: 30px;'>
           <img src="https://www.themoviedb.org/t/p/w440_and_h660_face{{poster_path}}">
         </div>
@@ -40,8 +40,8 @@
 
 <template name='pagination'>
   <div style='text-align: center; margin: 20px;'>
-    <button style='display: inline;' data-id='{{ pagePrecedente }}' class="btn btn-outline-info">&laquo;</button>
+    <button style='display: inline;' id='pagePrecedente' class="btn btn-outline-info">&laquo;</button>
     <span style='display: inline;' class='pagination'>{{ page }}</span>
-    <button style='display: inline;' data-id='{{ pageSuivante }}' class="btn btn-outline-info">&raquo;</button>
+    <button style='display: inline;' id='pageSuivante' class="btn btn-outline-info">&raquo;</button>
   </div>
 </template>
