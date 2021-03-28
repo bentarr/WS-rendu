@@ -29,7 +29,7 @@
         </div>
         <div class='card-body'>
           <p>{{ overview }}</p>
-          <button data-id='{{ id }}'>Like</button>
+          <button class="btn btn-info" data-id='{{ id }}'>Like</button>
           <p>Like : {{ like }}</p>
         </div>
       </div>
@@ -40,8 +40,8 @@
 
 <template name='pagination'>
   <div style='text-align: center; margin: 20px;'>
-    <button style='display: inline;' data-id='{{ pagePrecedente }}' class="page-link">&laquo;</button>
+    <button style='display: inline;' data-id='{{ pagePrecedente }}' class="btn btn-outline-info">&laquo;</button>
     <span style='display: inline;' class='pagination'>{{ page }}</span>
-    <button style='display: inline;' data-id='{{ pageSuivante }}' class="page-link">&raquo;</button>
+    <button style='display: inline;' data-id='{{ pageSuivante }}' class="btn btn-outline-info">&raquo;</button>
   </div>
 </template>

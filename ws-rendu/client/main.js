@@ -54,6 +54,7 @@ Template.pagination.onCreated(function paginationOnCreated() {
   this.page = new ReactiveVar(1);
 });
 
+
 Template.pagination.helpers({
   page() {
     return Template.instance().page.get()
