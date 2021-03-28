@@ -6,16 +6,17 @@ import { SERVER_CONFIG } from './server-config.js';
 
 const Like = new Mongo.Collection('like');
 
+let baseurl = SERVER_CONFIG.themoviedb_api_config.base_url;
+let apikey = SERVER_CONFIG.themoviedb_api_config.api_key;
+let language = SERVER_CONFIG.themoviedb_api_config.language;
+const urlDeBase = baseurl + 'discover/movie?api_key=' + apikey + '&language=' + language;
+
 Meteor.startup(() => {});
 
 WebApp.connectHandlers.use('/api/discover/movies', (req, res, next) => {
-  let baseurl = SERVER_CONFIG.themoviedb_api_config.base_url;
-  let apikey = SERVER_CONFIG.themoviedb_api_config.api_key;
-  let language = SERVER_CONFIG.themoviedb_api_config.language;
-  
   HTTP.call(
     'GET', 
-    baseurl + 'discover/movie?api_key=' + apikey + '&language=' + language,
+    urlDeBase,
     {},
     (error, response) => {
       let newResp = response.data;

@@ -1,7 +1,7 @@
 body {
   padding: 10px;
   font-family: sans-serif;
-  font-size: 35px;
+  font-size: 12px;
   background-color: rosybrown;
 }
 
@@ -9,17 +9,32 @@ h1 {
   text-align: center;
 }
 
-h3, #list {
+/*h3, */#list {
   text-align: center;
   border: solid;
   border-radius: 10px;
   border-width: 1px;
+  margin-bottom: 20px;
 }
 
 .container {
   display: flex;
   justify-content: center;
   margin-bottom: 4%;
+}
+
+.footer {
+  bottom: 80px;
+  text-align: center;
+  height: 80px;
+  background-color: white;
+  color: black;
+  width: 100%;
+}
+
+.pagination {
+  margin-right: 10px; 
+  margin-left: 10px
 }
 
 img {

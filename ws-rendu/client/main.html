@@ -1,25 +1,47 @@
 <head>
+  <link href="https://bootswatch.com/4/litera/bootstrap.min.css" rel="stylesheet">
   <title>[EPSI] Web services</title>
 </head>
 
 <body>
-  <h1>[EPSI] Application utilisant un web service</h1>
-  {{> home}}
+  <div class="jumbotron">
+    <h1>[EPSI] Application utilisant un web service</h1>
+  </div>
+  <h1 id="list">Liste des films</h1>
+  {{> pagination}}
+  {{> films}}
+  {{> pagination}}
+  <footer class="footer">
+    <hr>
+    <p>BAZATS Tom, MADEZO Oscar, NANDILLON Séverin</p>
+    <p>EPSI B3 DEV G2</p>
+  </footer>
 </body>
 
-<template name='home'>
-  <h1 id="list">Movies list</h1>
-  {{ #each movies }}
-  <div class="row container">
-    <div class="col-3">
-      <img src="https://www.themoviedb.org/t/p/w440_and_h660_face{{poster_path}}">
+<template name='films'>
+  <div class='row'>
+    {{ #each movies }}
+    <div class='col-md-3'>
+      <div class="card bg-light mb-3">
+        <h3 class='card-header'>{{ original_title }}</h3>
+        <div style='margin-top: 30px;'>
+          <img src="https://www.themoviedb.org/t/p/w440_and_h660_face{{poster_path}}">
+        </div>
+        <div class='card-body'>
+          <p>{{ overview }}</p>
+          <button data-id='{{ id }}'>Like</button>
+          <p>Like : {{ like }}</p>
+        </div>
+      </div>
     </div>
-    <div class="col-9 text">
-      <h3>{{ original_title }}</h3>
-      <li>{{ overview }}</li>
-      <button data-id='{{ id }}'>Like</button>
-      <p>Like : {{ like }}</p>
-    </div>
+    {{ /each }}
   </div>
-  {{ /each }}
+</template>
+
+<template name='pagination'>
+  <div style='text-align: center; margin: 20px;'>
+    <button style='display: inline;' data-id='{{ pagePrecedente }}' class="page-link">&laquo;</button>
+    <span style='display: inline;' class='pagination'>{{ page }}</span>
+    <button style='display: inline;' data-id='{{ pageSuivante }}' class="page-link">&raquo;</button>
+  </div>
 </template>

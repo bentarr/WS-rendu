@@ -4,8 +4,9 @@ import { HTTP } from 'meteor/http';
 
 import './main.html';
 
-Template.home.onCreated(function homeOnCreated() {
-  let ctrl = this;
+// [Template] Films
+
+Template.films.onCreated(function filmsOnCreated() {
   this.movies = new ReactiveVar()
 
   HTTP.call(
@@ -13,18 +14,18 @@ Template.home.onCreated(function homeOnCreated() {
     'http://localhost:3000/api/discover/movies',
     {},
     (error, response) => {
-      ctrl.movies.set(JSON.parse(response.content).results)
+      this.movies.set(JSON.parse(response.content).results)
     }
   );
 });
 
-Template.home.helpers({
+Template.films.helpers({
   movies() {
     return Template.instance().movies.get()
   }
 });
 
-Template.home.events({
+Template.films.events({
   'click button'(event, instance) {
     const idMovie = event.currentTarget.dataset.id;
     updateLikeMovie(idMovie, Template.instance().movies);
@@ -46,3 +47,15 @@ function updateLikeMovie(idMovie, movies) {
     } 
   )
 }
+
+// [Template] Pagination
+
+Template.pagination.onCreated(function paginationOnCreated() {
+  this.page = new ReactiveVar(1);
+});
+
+Template.pagination.helpers({
+  page() {
+    return Template.instance().page.get()
+  }
+});
