@@ -50,21 +50,10 @@ WebApp.connectHandlers.use('/api/filtre', (req, res, next) => {
   let filtreActif = req.originalUrl.split('/')[3];
   let numeroPage = req.originalUrl.split('/')[4];
   let filtreUrl = '';
-  switch (filtreActif) {
-    case 'doc':
-      filtreUrl = 'release_date.asc';
-      break;
-    case 'dod':
-      filtreUrl = 'release_date.desc';
-      break;
-    case 'poc':
-      filtreUrl = 'popularity.asc';
-      break;
-    case 'pod':
-      filtreUrl = 'popularity.desc';
-      break;
-    default:
-      break;
+  if (filtreActif == 'poc') {
+    filtreUrl = 'popularity.asc'
+  } else if (filtreActif == 'pod') {
+    filtreUrl = 'popularity.desc';
   }
   HTTP.call(
     'GET', 
