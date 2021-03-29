@@ -13,23 +13,6 @@ const urlDeBase = baseurl + 'discover/movie?api_key=' + apikey + '&language=' + 
 
 Meteor.startup(() => {});
 
-WebApp.connectHandlers.use('/api/discover/movies', (req, res, next) => {
-  HTTP.call(
-    'GET', 
-    urlDeBase,
-    {},
-    (error, response) => {
-      let newResp = response.data;
-      newResp.results.forEach((movie) => {
-        let resource = Like.findOne({ id: movie.id });
-        movie.like = resource ? resource.like : 0;
-      });
-      res.writeHead(200);
-      res.end(JSON.stringify(newResp));
-    }
-  );
-});
-
 WebApp.connectHandlers.use('/api/like', (req, res, next) => {
     switch (req.method) {
       case 'GET':
