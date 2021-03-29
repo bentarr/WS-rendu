@@ -43,5 +43,14 @@
     <button style='display: inline;' id='pagePrecedente' class="btn btn-outline-info">&laquo;</button>
     <span style='display: inline;' class='pagination'>{{ page }}</span>
     <button style='display: inline;' id='pageSuivante' class="btn btn-outline-info">&raquo;</button>
+    <div id="filterform">
+      <select class="form-control" id="filter">
+        <option value="0"></option>
+        <option value="1">Date : par ordre croissant</option>
+        <option value="2">Date : par ordre décroissant</option>
+        <option value="3">Popularité : par ordre croissant</option>
+        <option value="4">Popularité : par ordre décroissant</option>
+      </select>
+    </div>  
   </div>
 </template>
