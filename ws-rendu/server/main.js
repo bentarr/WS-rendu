@@ -46,6 +46,42 @@ WebApp.connectHandlers.use('/api/page', (req, res, next) => {
   );
 });
 
+WebApp.connectHandlers.use('/api/filtre', (req, res, next) => {
+  let filtreActif = req.originalUrl.split('/')[3];
+  let numeroPage = req.originalUrl.split('/')[4];
+  let filtreUrl = '';
+  switch (filtreActif) {
+    case 'doc':
+      filtreUrl = 'release_date.asc';
+      break;
+    case 'dod':
+      filtreUrl = 'release_date.desc';
+      break;
+    case 'poc':
+      filtreUrl = 'popularity.asc';
+      break;
+    case 'pod':
+      filtreUrl = 'popularity.desc';
+      break;
+    default:
+      break;
+  }
+  HTTP.call(
+    'GET', 
+    urlDeBase + '&sort_by=' + filtreUrl + '&page=' + numeroPage,
+    {},
+    (error, response) => {
+      let newResp = response.data;
+      newResp.results.forEach((movie) => {
+        let resource = Like.findOne({ id: movie.id });
+        movie.like = resource ? resource.like : 0;
+      });
+      res.writeHead(200);
+      res.end(JSON.stringify(newResp));
+    }
+  );
+});
+
 function updateLikeMovie(idMovie) {
   let resource = Like.findOne({ id: idMovie });
   if (resource) {
