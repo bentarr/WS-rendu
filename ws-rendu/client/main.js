@@ -6,6 +6,10 @@ import './main.html';
 
 var movies = new ReactiveVar();
 var page = new ReactiveVar(1);
+var filtreDateDecroissant = new ReactiveVar(false);
+var filtreDateCroissant = new ReactiveVar(false);
+var filtrePopulariteDecroissant = new ReactiveVar(false);
+var filtrePopulariteCroissant = new ReactiveVar(false);
 
 // [Template] Films
 
@@ -52,9 +56,11 @@ function updateLikeMovie(idMovie, movies) {
 // [Template] Pagination
 
 Template.pagination.helpers({
-  page() {
-    return page.get()
-  }
+  page() { return page.get(); },
+  filtreDateDecroissant() { return filtreDateDecroissant.get(); },
+  filtreDateCroissant() { return filtreDateDecroissant.get(); },
+  filtrePopulariteDecroissant() { return filtreDateDecroissant.get(); },
+  filtrePopulariteCroissant() { return filtreDateDecroissant.get(); }
 });
 
 Template.pagination.events({
@@ -63,6 +69,7 @@ Template.pagination.events({
       page.set(page.get() - 1);
       HTTP.call(
         'GET',
+        // ajouter un switch case pour le filtre actif
         'http://localhost:3000/api/page/' + page.get(),
         {},
         (error, response) => {
@@ -83,5 +90,47 @@ Template.pagination.events({
         }
       );
     }
+  },
+  'change #filter'(event) {
+    let id = event.target.value;
+    let filterType = '';
+    filtreDateCroissant.set(false);
+    filtreDateDecroissant.set(false);
+    filtrePopulariteCroissant.set(false);
+    filtrePopulariteDecroissant.set(false);
+    if (id == 0) {
+      HTTP.call(
+        'GET',
+        'http://localhost:3000/api/page/' + page.get(),
+        {},
+        (error, response) => {
+          movies.set(JSON.parse(response.content).results)
+        }
+      );
+    } else if (id == 1) {
+      // Date : par ordre croissant
+      filtreDateCroissant.set(true);
+      filterType = 'doc';
+    } else if (id == 2) {
+      // Date : par ordre décroissant
+      filtreDateDecroissant.set(true);
+      filterType = 'dod';
+    } else if (id == 3) {
+      // Popularité : par ordre croissant
+      filtrePopulariteCroissant.set(true);
+      filterType = 'poc';
+    } else if (id == 4) {
+      // Popularité : par ordre décroissant
+      filtrePopulariteDecroissant.set(true);
+      filterType = 'pod';
+    }
+    HTTP.call(
+      'GET',
+      'http://localhost:3000/api/filtre/' + filterType + '/' + page.get(),
+      {},
+      (error, response) => {
+        movies.set(JSON.parse(response.content).results);
+      }
+    );
   }
 });
