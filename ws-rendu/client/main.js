@@ -10,10 +10,9 @@ var page = new ReactiveVar(1);
 // [Template] Films
 
 Template.films.onCreated(function filmsOnCreated() {
-
   HTTP.call(
     'GET',
-    'http://localhost:3000/api/discover/movies',
+    'http://localhost:3000/api/page/' + page.get(),
     {},
     (error, response) => {
       movies.set(JSON.parse(response.content).results)
