@@ -31,9 +31,7 @@ Template.films.events({
 // [Template] Pagination
 
 Template.pagination.helpers({
-  page() { return page.get(); },
-  filtrePopulariteDecroissant() { return filtreDateDecroissant.get(); },
-  filtrePopulariteCroissant() { return filtreDateDecroissant.get(); }
+  page() { return page.get(); }
 });
 
 Template.pagination.events({
@@ -67,25 +65,7 @@ Template.pagination.events({
       filmsAvecFiltreEtPage(filterType);
     }
   },
-  'change #filter'(event) {
-    let id = event.target.value;
-    let filterType = '';
-    filtrePopulariteCroissant.set(false);
-    filtrePopulariteDecroissant.set(false);
-    if (id == 0) {
-      recupererTousLesFilms();
-      return;
-    } else if (id == 3) {
-      // Popularité : par ordre croissant
-      filtrePopulariteCroissant.set(true);
-      filterType = 'poc';
-    } else if (id == 4) {
-      // Popularité : par ordre décroissant
-      filtrePopulariteDecroissant.set(true);
-      filterType = 'pod';
-    }
-    filmsAvecFiltreEtPage(filterType);
-  }
+
 });
 
 function recupererTousLesFilms() {
@@ -121,3 +101,25 @@ function updateLikeMovie(idMovie) {
     } 
   )
 }
+
+Template.filterselect.events({
+  'change #filter'(event) {
+    let id = event.target.value;
+    let filterType = '';
+    filtrePopulariteCroissant.set(false);
+    filtrePopulariteDecroissant.set(false);
+    if (id == 0) {
+      recupererTousLesFilms();
+      return;
+    } else if (id == 3) {
+      // Popularité : par ordre croissant
+      filtrePopulariteCroissant.set(true);
+      filterType = 'poc';
+    } else if (id == 4) {
+      // Popularité : par ordre décroissant
+      filtrePopulariteDecroissant.set(true);
+      filterType = 'pod';
+    }
+    filmsAvecFiltreEtPage(filterType);
+  }
+})
