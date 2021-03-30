@@ -51,7 +51,7 @@ WebApp.connectHandlers.use('/api/filtre', (req, res, next) => {
   let numeroPage = req.originalUrl.split('/')[4];
   let filtreUrl = '';
   if (filtreActif == 'poc') {
-    filtreUrl = 'popularity.asc'
+    filtreUrl = 'popularity.asc' ;
   } else if (filtreActif == 'pod') {
     filtreUrl = 'popularity.desc';
   }
