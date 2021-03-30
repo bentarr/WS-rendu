@@ -54,5 +54,13 @@
       <option value="3">Popularité : par ordre croissant</option>
       <option value="4">Popularité : par ordre décroissant</option>
     </select>
-  </div>  
+  </div>
+  <div>
+    <select class='form-control' id='genres'>
+      <option value="0">Aucun genre</option>
+      {{ #each genres }}
+      <option value='{{ id }}'>{{ name }}</option>
+      {{ /each }}
+    </select>
+  </div>
 </template>

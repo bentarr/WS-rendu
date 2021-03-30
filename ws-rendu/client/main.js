@@ -5,20 +5,22 @@ import { HTTP } from 'meteor/http';
 import './main.html';
 
 var movies = new ReactiveVar();
+var genres = new ReactiveVar();
 var page = new ReactiveVar(1);
+var idGenreActif = new ReactiveVar(0);
 var filtrePopulariteDecroissant = new ReactiveVar(false);
 var filtrePopulariteCroissant = new ReactiveVar(false);
+var filtreGenre = new ReactiveVar(false);
 
 // [Template] Films
 
 Template.films.onCreated(function filmsOnCreated() {
   recupererTousLesFilms();
+  recupererTousLesGenres();
 });
 
 Template.films.helpers({
-  movies() {
-    return movies.get();
-  }
+  movies() { return movies.get(); }
 });
 
 Template.films.events({
@@ -41,13 +43,15 @@ Template.pagination.events({
       let filterType = '';
       if (filtrePopulariteCroissant.get()) {
         filterType = 'poc';
+        filmsAvecFiltreEtPage(filterType);
       } else if (filtrePopulariteDecroissant.get()) {
         filterType = 'pod';
+        filmsAvecFiltreEtPage(filterType);
+      } else if (filtreGenre.get()) {
+        filmsAvecGenreEtPage(idGenreActif.get());
       } else {
         recupererTousLesFilms();
-        return;
       }
-      filmsAvecFiltreEtPage(filterType);
     }
   },
   'click #pageSuivante'() {
@@ -56,51 +60,25 @@ Template.pagination.events({
       let filterType = '';
       if (filtrePopulariteCroissant.get()) {
         filterType = 'poc';
+        filmsAvecFiltreEtPage(filterType);
       } else if (filtrePopulariteDecroissant.get()) {
         filterType = 'pod';
+        filmsAvecFiltreEtPage(filterType);
+      } else if (filtreGenre.get()) {
+        filmsAvecGenreEtPage(idGenreActif.get());
       } else {
         recupererTousLesFilms();
-        return;
       }
-      filmsAvecFiltreEtPage(filterType);
     }
   },
 
 });
 
-function recupererTousLesFilms() {
-  HTTP.call(
-    'GET',
-    'http://localhost:3000/api/page/' + page.get(),
-    {},
-    (error, response) => { movies.set(JSON.parse(response.content).results); }
-  );
-}
+// [Template] Filtres
 
-function filmsAvecFiltreEtPage(filtreActif) {
-  HTTP.call(
-    'GET',
-    'http://localhost:3000/api/filtre/' + filtreActif + '/' + page.get(),
-    {},
-    (error, response) => { movies.set(JSON.parse(response.content).results); }
-    );
-  }
-
-function updateLikeMovie(idMovie) {
-  HTTP.call(
-    'PUT', 
-    'http://localhost:3000/api/like/' + idMovie,
-    {},
-    (error, response) => {
-      let index = movies.get().findIndex(
-        (item) => { return item.id === JSON.parse(response.content).id; }
-      );
-      let moviesList = movies.get();
-      moviesList[index].like = JSON.parse(response.content).like;
-      movies.set(moviesList);
-    } 
-  )
-}
+Template.filterselect.helpers({
+  genres() { return genres.get(); }
+})
 
 Template.filterselect.events({
   'change #filter'(event) {
@@ -121,5 +99,69 @@ Template.filterselect.events({
       filterType = 'pod';
     }
     filmsAvecFiltreEtPage(filterType);
+  },
+  'change #genres'(event) {
+    idGenreActif.set(event.target.value);
+    if (idGenreActif.get() == 0) {
+      filtreGenre.set(false);
+      recupererTousLesFilms();
+    } else {
+      filtreGenre.set(true);
+      filmsAvecGenreEtPage(idGenreActif.get());
+    }
   }
 })
+
+// Fonctions
+
+function recupererTousLesFilms() {
+  HTTP.call(
+    'GET',
+    'http://localhost:3000/api/movies/' + page.get(),
+    {},
+    (error, response) => { movies.set(JSON.parse(response.content).results); }
+  );
+}
+
+function recupererTousLesGenres() {
+  HTTP.call(
+    'GET',
+    'http://localhost:3000/api/genres',
+    {},
+    (error, response) => { genres.set(JSON.parse(response.content).genres); }
+  );
+}
+
+function updateLikeMovie(idMovie) {
+  HTTP.call(
+    'PUT', 
+    'http://localhost:3000/api/like/' + idMovie,
+    {},
+    (error, response) => {
+      let index = movies.get().findIndex(
+        (item) => { return item.id === JSON.parse(response.content).id; }
+      );
+      let moviesList = movies.get();
+      moviesList[index].like = JSON.parse(response.content).like;
+      movies.set(moviesList);
+    } 
+  );
+}
+
+function filmsAvecFiltreEtPage(filtreActif) {
+  HTTP.call(
+    'GET',
+    'http://localhost:3000/api/films/filtre/' + filtreActif + '/' + page.get(),
+    {},
+    (error, response) => { movies.set(JSON.parse(response.content).results); }
+  );
+}
+
+function filmsAvecGenreEtPage(idGenreActif) {
+  HTTP.call(
+    'GET',
+    'http://localhost:3000/api/films/genre/' + idGenreActif + '/' + page.get(),
+    {},
+    (error, response) => { movies.set(JSON.parse(response.content).results); }
+  );
+}
