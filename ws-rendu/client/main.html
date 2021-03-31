@@ -1,13 +1,16 @@
-<head>
-  <link href="https://bootswatch.com/4/litera/bootstrap.min.css" rel="stylesheet">
+<head>    
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=0.8">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
   <title>[EPSI] Web services</title>
 </head>
 
 <body>
   <div class="jumbotron">
-    <h1>[EPSI] Application utilisant un web service</h1>
+    <h1 class="display-4">[EPSI] Application utilisant un web service</h1>
+    <hr class="my-4">
+    <p>Notre application utilise l'api publique de themoviedb via des appels http.</p>
   </div>
-  <h1 id="list">Liste des films</h1>
   {{> filterselect}}
   {{> pagination}}
   {{> films}}
@@ -17,21 +20,34 @@
     <p>BAZATS Tom, MADEZO Oscar, NANDILLON Séverin</p>
     <p>EPSI B3 DEV G2</p>
   </footer>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </body>
 
 <template name='films'>
-  <div class='row'>
+  <div class="accordion" id='accordion'>
     {{ #each movies }}
-    <div class='col-md-3'>
-      <div class="card bg-light mb-3">
-        <h3 class='card-header'>{{ title }}</h3>
-        <div style='margin-top: 30px;'>
-          <img src="https://www.themoviedb.org/t/p/w440_and_h660_face{{poster_path}}">
-        </div>
-        <div class='card-body'>
-          <p>{{ overview }}</p>
-          <p>Popularité : {{ popularity }}</p>
-          <button class="btn btn-info" data-id='{{ id }}'>Like : {{ like }}</button>
+    <div class="card">
+      <div class="card-header" id="headingOne">
+          <button type="button" class="btn btn-outline-info" data-toggle="collapse" data-target='#collapse_movie_{{ id }}' aria-expanded="false" aria-controls='collapse_movie_{{ id }}'>
+            {{ title }}
+          </button>
+      </div>
+
+      <div id='collapse_movie_{{ id }}' class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-3">
+              <img src="https://www.themoviedb.org/t/p/w440_and_h660_face{{poster_path}}">
+            </div>
+            <div class="col-9">
+              <p><b>Résumé :</b> {{ overview }}</p>
+              <p><b>Popularité :</b> {{ popularity }}</p>
+              <button class="btn btn-info" data-id='{{ id }}'>Like : {{ like }}</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -48,19 +64,22 @@
 </template>
 
 <template name='filterselect'>
-  <div id="filterform">
-    <select class="form-control" id="filter">
-      <option value="0">Aucun filtre</option>
-      <option value="3">Popularité : par ordre croissant</option>
-      <option value="4">Popularité : par ordre décroissant</option>
-    </select>
-  </div>
-  <div>
-    <select class='form-control' id='genres'>
-      <option value="0">Aucun genre</option>
-      {{ #each genres }}
-      <option value='{{ id }}'>{{ name }}</option>
-      {{ /each }}
-    </select>
+  <div class="row">
+    <div id="filterform" class="col-md-2">
+      <select id="filter" class="form-control">
+        <option value="0">Aucun filtre</option>
+        <option value="3">Popularité : par ordre croissant</option>
+        <option value="4">Popularité : par ordre décroissant</option>
+      </select>
+    </div>
+    <div id="filterform" class="col-md-2">
+      <select id='genres' class='form-control'>
+        <option value="0">Aucun genre</option>
+        {{ #each genres }}
+        <option value='{{ id }}'>{{ name }}</option>
+        {{ /each }}
+      </select>
+    </div>
+    <div class="col-md-8"></div> 
   </div>
 </template>

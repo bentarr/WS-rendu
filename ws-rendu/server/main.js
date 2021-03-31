@@ -104,6 +104,32 @@ WebApp.connectHandlers.use('/api/films/genre', (req, res, next) => {
   );
 });
 
+WebApp.connectHandlers.use('/api/films/filtre-genre', (req, res, next) => {
+  let filtreActif = req.originalUrl.split('/')[4];
+  let genreActif = req.originalUrl.split('/')[5];
+  let numeroPage = req.originalUrl.split('/')[6];
+  let filtreUrl = '';
+  if (filtreActif == 'poc') {
+    filtreUrl = 'popularity.asc' ;
+  } else if (filtreActif == 'pod') {
+    filtreUrl = 'popularity.desc';
+  }
+  HTTP.call(
+    'GET', 
+    urlDeBase + '&with_genres=' + genreActif  + '&sort_by=' + filtreUrl + '&page=' + numeroPage,
+    {},
+    (error, response) => {
+      let newResp = response.data;
+      newResp.results.forEach((movie) => {
+        let resource = Like.findOne({ id: movie.id });
+        movie.like = resource ? resource.like : 0;
+      });
+      res.writeHead(200);
+      res.end(JSON.stringify(newResp));
+    }
+  );
+});
+
 function updateLikeMovie(idMovie) {
   let resource = Like.findOne({ id: idMovie });
   if (resource) {
