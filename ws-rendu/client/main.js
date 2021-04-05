@@ -42,7 +42,7 @@ Template.films.events({
 
 Template.pagination.helpers({
   page() { return page.get(); },
-  doitSafficher() { return nbFilms.get() > 0; }
+  doitSafficher() { return nbPages.get() > 1; }
 });
 
 Template.pagination.events({
@@ -133,8 +133,6 @@ function recupererTousLesFilms() {
     dateActuelle = date.get(); 
     url += '&date=' + dateActuelle; 
   }
-
-  console.log(url)
 
   HTTP.call(
     'GET',
