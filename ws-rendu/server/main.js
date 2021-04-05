@@ -11,6 +11,7 @@ let apikey = SERVER_CONFIG.themoviedb_api_config.api_key;
 let language = SERVER_CONFIG.themoviedb_api_config.language;
 const urlDeBase = baseurl + 'discover/movie?api_key=' + apikey + '&language=' + language;
 const urlGenres = baseurl + 'genre/movie/list?api_key=' + apikey + '&language=' + language;
+const urlSearch = baseurl + 'search/movie?api_key=' + apikey + '&language=' + language;
 
 Meteor.startup(() => {});
 
@@ -42,6 +43,38 @@ WebApp.connectHandlers.use('/api/like', (req, res, next) => {
     }
   }
 );
+
+WebApp.connectHandlers.use('/api/search', (req, res, next) => {
+  let params = urlSplit(req.originalUrl);
+  let urlFinal = urlSearch;
+  let page = '';
+  let input = '';
+
+  params.forEach(param => {
+    switch (param[0]) {
+      case 'page':
+        page = param[1];
+        urlFinal += '&page=' + page;
+        break;
+      case 'input':
+        input = param[1];
+        urlFinal += '&query=' + input;
+        break;
+      default:
+        break;
+    }
+  });
+
+  HTTP.call(
+    'GET', 
+    urlFinal,
+    {},
+    (error, response) => {
+      res.writeHead(200);
+      res.end(JSON.stringify(response.data));
+    }
+  );
+});
 
 WebApp.connectHandlers.use('/api/films', (req, res, next) => {
   let page = '';
