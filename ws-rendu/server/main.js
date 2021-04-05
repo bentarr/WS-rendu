@@ -14,23 +14,6 @@ const urlGenres = baseurl + 'genre/movie/list?api_key=' + apikey + '&language=' 
 
 Meteor.startup(() => {});
 
-WebApp.connectHandlers.use('/api/movies', (req, res, next) => {
-  HTTP.call(
-    'GET', 
-    urlDeBase + '&page=' + req.url.split('/')[1],
-    {},
-    (error, response) => {
-      let newResp = response.data;
-      newResp.results.forEach((movie) => {
-        let resource = Like.findOne({ id: movie.id });
-        movie.like = resource ? resource.like : 0;
-      });
-      res.writeHead(200);
-      res.end(JSON.stringify(newResp));
-    }
-  );
-});
-
 WebApp.connectHandlers.use('/api/genres', (req, res, next) => {
   HTTP.call(
     'GET', 
@@ -60,79 +43,50 @@ WebApp.connectHandlers.use('/api/like', (req, res, next) => {
   }
 );
 
-WebApp.connectHandlers.use('/api/films/date', (req, res, next) => {
-  let numeroPage = req.originalUrl.split('/')[4];
-  let date = req.originalUrl.split('/')[5];
-  HTTP.call(
-    'GET', 
-    urlDeBase + '&primary_release_year=' + date + '&page=' + numeroPage,
-    {},
-    (error, response) => {
-      let date = response.data;
-      res.writeHead(200);
-      res.end(JSON.stringify(date));
+WebApp.connectHandlers.use('/api/films', (req, res, next) => {
+  let page = '';
+  let filtre = '';
+  let genre = '';
+  let date = '';
+  let params = urlSplit(req.originalUrl);
+  let urlFinal = urlDeBase;
+
+  params.forEach(param => {
+    switch (param[0]) {
+      case 'page':
+        page = param[1];
+        urlFinal += '&page=' + page;
+        break;
+      case 'filtre':
+        filtre = param[1];
+        switch (filtre) {
+          case 'pod':
+            filtre = 'popularity.desc';
+            break;
+          case 'poc':
+            filtre = 'popularity.asc';
+            break;
+          default:
+            break;
+        }
+        urlFinal += '&sort_by=' + filtre;
+        break;
+      case 'genre':
+        genre = param[1];
+        urlFinal += '&with_genres=' + genre;
+        break;
+      case 'date':
+        date = param[1];
+        urlFinal += '&primary_release_year=' + date;
+        break;
+      default:
+        break;
     }
-  );
-});
+  });
 
-WebApp.connectHandlers.use('/api/films/filtre', (req, res, next) => {
-  let filtreActif = req.originalUrl.split('/')[4];
-  let numeroPage = req.originalUrl.split('/')[5];
-  let filtreUrl = '';
-  if (filtreActif == 'poc') {
-    filtreUrl = 'popularity.asc' ;
-  } else if (filtreActif == 'pod') {
-    filtreUrl = 'popularity.desc';
-  }
   HTTP.call(
     'GET', 
-    urlDeBase + '&sort_by=' + filtreUrl + '&page=' + numeroPage,
-    {},
-    (error, response) => {
-      let newResp = response.data;
-      newResp.results.forEach((movie) => {
-        let resource = Like.findOne({ id: movie.id });
-        movie.like = resource ? resource.like : 0;
-      });
-      res.writeHead(200);
-      res.end(JSON.stringify(newResp));
-    }
-  );
-});
-
-WebApp.connectHandlers.use('/api/films/genre', (req, res, next) => {
-  let genreActif = req.originalUrl.split('/')[4];
-  let numeroPage = req.originalUrl.split('/')[5];
-  HTTP.call(
-    'GET', 
-    urlDeBase + '&with_genres=' + genreActif + '&page=' + numeroPage,
-    {},
-    (error, response) => {
-      let newResp = response.data;
-      newResp.results.forEach((movie) => {
-        let resource = Like.findOne({ id: movie.id });
-        movie.like = resource ? resource.like : 0;
-      });
-      res.writeHead(200);
-      res.end(JSON.stringify(newResp));
-    }
-  );
-});
-
-
-WebApp.connectHandlers.use('/api/films/filtre-genre', (req, res, next) => {
-  let filtreActif = req.originalUrl.split('/')[4];
-  let genreActif = req.originalUrl.split('/')[5];
-  let numeroPage = req.originalUrl.split('/')[6];
-  let filtreUrl = '';
-  if (filtreActif == 'poc') {
-    filtreUrl = 'popularity.asc' ;
-  } else if (filtreActif == 'pod') {
-    filtreUrl = 'popularity.desc';
-  }
-  HTTP.call(
-    'GET', 
-    urlDeBase + '&with_genres=' + genreActif  + '&sort_by=' + filtreUrl + '&page=' + numeroPage,
+    urlFinal,
     {},
     (error, response) => {
       let newResp = response.data;
@@ -145,6 +99,15 @@ WebApp.connectHandlers.use('/api/films/filtre-genre', (req, res, next) => {
     }
   );
 });
+
+function urlSplit(url) {
+  let urlParams = url.split('?')[1].split('&');
+  let params = [];
+  urlParams.forEach(param => {
+    params.push(param.split('='));
+  });
+  return params;
+}
 
 function updateLikeMovie(idMovie) {
   let resource = Like.findOne({ id: idMovie });
