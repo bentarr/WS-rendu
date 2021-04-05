@@ -7,6 +7,8 @@ import './main.html';
 var movies = new ReactiveVar();
 var genres = new ReactiveVar();
 var page = new ReactiveVar(1);
+var date = new ReactiveVar();
+var filtreDate = new ReactiveVar(false);
 var idGenreActif = new ReactiveVar(0);
 var filtrePopulariteDecroissant = new ReactiveVar(false);
 var filtrePopulariteCroissant = new ReactiveVar(false);
@@ -53,7 +55,10 @@ Template.pagination.events({
         filmsAvecFiltreEtPage(filterType);
       } else if (filtreGenre.get()) {
         filmsAvecGenreEtPage(idGenreActif.get());
-      } else {
+      } else if (filtreDate.get()){
+        recupererToutesLesDates(date.get()); 
+      }
+      else {
         recupererTousLesFilms();
       }
     }
@@ -74,6 +79,8 @@ Template.pagination.events({
         filmsAvecFiltreEtPage(filterType);
       } else if (filtreGenre.get()) {
         filmsAvecGenreEtPage(idGenreActif.get());
+      } else if (filtreDate.get()){
+        recupererToutesLesDates(date.get());
       } else {
         recupererTousLesFilms();
       }
@@ -143,7 +150,18 @@ Template.filterselect.events({
       }
       filmsAvecGenreEtPage(idGenreActif.get());
     }
+  },
+  'input #date'(event){
+    date.set(event.target.value);
+    if (date.get()== null){
+      filtreDate.set(false);
+    }
+    if (date.get() != null){
+      filtreDate.set(true);
+      recupererToutesLesDates(date.get());
+    }    
   }
+  
 })
 
 // Fonctions
@@ -163,6 +181,16 @@ function recupererTousLesGenres() {
     'http://localhost:3000/api/genres',
     {},
     (error, response) => { genres.set(JSON.parse(response.content).genres); }
+  );
+}
+
+function recupererToutesLesDates(date) {
+  console.log(date)
+  HTTP.call(
+    'GET',
+    'http://localhost:3000/api/films/date/' + page.get() + '/' + date,
+    {},
+    (error, response) => { movies.set(JSON.parse(response.content).results); }
   );
 }
 

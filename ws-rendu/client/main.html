@@ -45,6 +45,7 @@
             <div class="col-9">
               <p><b>Résumé :</b> {{ overview }}</p>
               <p><b>Popularité :</b> {{ popularity }}</p>
+              <p><b>Date : </b> {{ release_date }}</p>
               <button class="btn btn-info" data-id='{{ id }}'>Like : {{ like }}</button>
             </div>
           </div>
@@ -80,6 +81,9 @@
         {{ /each }}
       </select>
     </div>
-    <div class="col-md-8"></div> 
+    <div id="filterform" class="col-md-2">
+          <input type="number" id="date">
+    </div>
+    <div class="col-md-6"></div> 
   </div>
 </template>

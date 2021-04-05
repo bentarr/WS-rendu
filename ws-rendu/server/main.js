@@ -60,6 +60,21 @@ WebApp.connectHandlers.use('/api/like', (req, res, next) => {
   }
 );
 
+WebApp.connectHandlers.use('/api/films/date', (req, res, next) => {
+  let numeroPage = req.originalUrl.split('/')[4];
+  let date = req.originalUrl.split('/')[5];
+  HTTP.call(
+    'GET', 
+    urlDeBase + '&primary_release_year=' + date + '&page=' + numeroPage,
+    {},
+    (error, response) => {
+      let date = response.data;
+      res.writeHead(200);
+      res.end(JSON.stringify(date));
+    }
+  );
+});
+
 WebApp.connectHandlers.use('/api/films/filtre', (req, res, next) => {
   let filtreActif = req.originalUrl.split('/')[4];
   let numeroPage = req.originalUrl.split('/')[5];
@@ -103,6 +118,7 @@ WebApp.connectHandlers.use('/api/films/genre', (req, res, next) => {
     }
   );
 });
+
 
 WebApp.connectHandlers.use('/api/films/filtre-genre', (req, res, next) => {
   let filtreActif = req.originalUrl.split('/')[4];
