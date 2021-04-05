@@ -6,6 +6,7 @@ import './main.html';
 
 var nbPages = new ReactiveVar();
 var movies = new ReactiveVar();
+var nbFilms = new ReactiveVar();
 var genres = new ReactiveVar();
 var page = new ReactiveVar(1);
 var date = new ReactiveVar();
@@ -16,6 +17,8 @@ var filtrePopulariteDecroissant = new ReactiveVar(false);
 var filtrePopulariteCroissant = new ReactiveVar(false);
 var filtreGenre = new ReactiveVar(false);
 
+
+
 // [Template] Films
 
 Template.films.onCreated(function filmsOnCreated() {
@@ -24,7 +27,8 @@ Template.films.onCreated(function filmsOnCreated() {
 });
 
 Template.films.helpers({
-  movies() { return movies.get(); }
+  movies() { return movies.get(); },
+  doitSafficher() { return nbFilms.get() > 0; }
 });
 
 Template.films.events({
@@ -37,7 +41,8 @@ Template.films.events({
 // [Template] Pagination
 
 Template.pagination.helpers({
-  page() { return page.get(); }
+  page() { return page.get(); },
+  doitSafficher() { return nbFilms.get() > 0; }
 });
 
 Template.pagination.events({
@@ -65,6 +70,7 @@ Template.filterselect.helpers({
 Template.filterselect.events({
   'change #filter'(event) {
     let id = event.target.value;
+    page.set(1);
     filtrePopulariteCroissant.set(false);
     filtrePopulariteDecroissant.set(false);
     if (id == 3) {
@@ -80,6 +86,7 @@ Template.filterselect.events({
   },
   'change #genres'(event) {
     idGenreActif.set(event.target.value);
+    page.set(1);
     if (idGenreActif.get() == 0) {
       filtreGenre.set(false);
     } else {
@@ -89,6 +96,7 @@ Template.filterselect.events({
   },
   'input #date'(event){
     date.set(event.target.value);
+    page.set(1);
     if (date.get() == null) {
       filtreDate.set(false);
     }
@@ -135,6 +143,7 @@ function recupererTousLesFilms() {
     (error, response) => { 
       movies.set(JSON.parse(response.content).results); 
       nbPages.set(JSON.parse(response.content).total_pages);
+      nbFilms.set(JSON.parse(response.content).total_results);
     }
   );
 }

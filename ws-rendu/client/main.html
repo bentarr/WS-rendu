@@ -27,41 +27,53 @@
 </body>
 
 <template name='films'>
-  <div class="accordion" id='accordion'>
-    {{ #each movies }}
-    <div class="card">
-      <div class="card-header" id="headingOne">
-          <button type="button" class="btn btn-outline-info" data-toggle="collapse" data-target='#collapse_movie_{{ id }}' aria-expanded="false" aria-controls='collapse_movie_{{ id }}'>
-            {{ title }}
-          </button>
-      </div>
+  {{ #if doitSafficher }}
+    <div class="accordion" id='accordion'>
+      {{ #each movies }}
+      <div class="card">
+        <div class="card-header" id="headingOne">
+            <button type="button" class="btn btn-outline-info" data-toggle="collapse" data-target='#collapse_movie_{{ id }}' aria-expanded="false" aria-controls='collapse_movie_{{ id }}'>
+              {{ title }}
+            </button>
+        </div>
 
-      <div id='collapse_movie_{{ id }}' class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
-        <div class="card-body">
-          <div class="row">
-            <div class="col-3">
-              <img src="https://www.themoviedb.org/t/p/w440_and_h660_face{{poster_path}}">
-            </div>
-            <div class="col-9">
-              <p><b>Résumé :</b> {{ overview }}</p>
-              <p><b>Popularité :</b> {{ popularity }}</p>
-              <p><b>Date : </b> {{ release_date }}</p>
-              <button class="btn btn-info" data-id='{{ id }}'>Like : {{ like }}</button>
+        <div id='collapse_movie_{{ id }}' class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-3">
+                <img src="https://www.themoviedb.org/t/p/w440_and_h660_face{{poster_path}}">
+              </div>
+              <div class="col-9">
+                <p><b>Résumé :</b> {{ overview }}</p>
+                <p><b>Popularité :</b> {{ popularity }}</p>
+                <p><b>Date : </b> {{ release_date }}</p>
+                <button class="btn btn-info" data-id='{{ id }}'>Like : {{ like }}</button>
+              </div>
             </div>
           </div>
         </div>
       </div>
+      {{ /each }}
     </div>
-    {{ /each }}
-  </div>
+  {{ else }}
+    <div class="row">
+      <div class="col-5"></div>
+      <div class="col-2">
+        <h4 style="text-align: center;">Aucun film à afficher.</h4>
+      </div>
+      <div class="col-5"></div>
+    </div>
+  {{ /if }}
 </template>
 
 <template name='pagination'>
-  <div style='text-align: center; margin: 20px;'>
-    <button style='display: inline;' id='pagePrecedente' class="btn btn-outline-info">&laquo;</button>
-    <span style='display: inline;' class='pagination'>{{ page }}</span>
-    <button style='display: inline;' id='pageSuivante' class="btn btn-outline-info">&raquo;</button>
-  </div>
+  {{ #if doitSafficher }}
+    <div style='text-align: center; margin: 20px;'>
+      <button style='display: inline;' id='pagePrecedente' class="btn btn-outline-info">&laquo;</button>
+      <span style='display: inline;' class='pagination'>{{ page }}</span>
+      <button style='display: inline;' id='pageSuivante' class="btn btn-outline-info">&raquo;</button>
+    </div>
+  {{ /if }}
 </template>
 
 <template name='filterselect'>
@@ -82,7 +94,7 @@
       </select>
     </div>
     <div id="filterform" class="col-md-2">
-          <input type="number" id="date">
+          <input class="form-control" type="number" id="date" placeholder="Filtrer par année...">
     </div>
     <div class="col-md-6"></div> 
   </div>
