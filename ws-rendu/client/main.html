@@ -68,7 +68,7 @@
 
 <template name='pagination'>
   {{ #if doitSafficher }}
-    <div style='text-align: center; margin-bottom: 20px;'>
+    <div style='text-align: center; margin-bottom: 20px; margin-top: 20px;'>
       <button style='display: inline;' id='pagePrecedente' class="btn btn-outline-info">&laquo;</button>
       <span style='display: inline;' class='pagination'>{{ page }}</span>
       <button style='display: inline;' id='pageSuivante' class="btn btn-outline-info">&raquo;</button>
@@ -80,22 +80,25 @@
   <div class="row">
     <div id="filterform" class="col-md-2">
       <select id="filter" class="form-control">
-        <option value="0">Aucun filtre</option>
+        <option value="">-- Aucun filtre --</option>
         <option value="3">Popularité : par ordre croissant</option>
         <option value="4">Popularité : par ordre décroissant</option>
       </select>
     </div>
     <div id="filterform" class="col-md-2">
       <select id='genres' class='form-control'>
-        <option value="0">Aucun genre</option>
+        <option value="">-- Aucun genre --</option>
         {{ #each genres }}
         <option value='{{ id }}'>{{ name }}</option>
         {{ /each }}
       </select>
     </div>
     <div id="filterform" class="col-md-2">
-          <input class="form-control" type="number" id="date" placeholder="Filtrer par année...">
+      <input class="form-control" type="number" id="date" placeholder="Filtrer par année..." value='{{ dateDefaultValue }}'>
     </div>
-    <div class="col-md-6"></div> 
+    <div id="filterform" class="col-md-2">
+      <input class="form-control" type="text" id="search" placeholder="Filtrer par titre..." value='{{ inputDefaultValue }}'>
+    </div>
+    <div class="col-md-4"></div> 
   </div>
 </template>
