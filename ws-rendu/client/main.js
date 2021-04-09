@@ -4,7 +4,7 @@ import { HTTP } from 'meteor/http';
 
 import './main.html';
 
-var preferedLanguage = new ReactiveVar();
+var preferedLanguageIso = new ReactiveVar();
 var languages = new ReactiveVar();
 var nbPages = new ReactiveVar();
 var movies = new ReactiveVar();
@@ -24,14 +24,14 @@ var filtreSearch = new ReactiveVar(false);
 // [Template] Films
 
 Template.films.onCreated(function filmsOnCreated() {
-  recupererTousLesFilms();
+  recupererLangagePrefere();
   recupererTousLesGenres();
 });
 
 Template.films.helpers({
   movies() { return movies.get(); },
   doitSafficher() { return nbFilms.get() > 0; },
-  preferedLanguage() { return preferedLanguage.get(); }
+  preferedLanguageIso() { return preferedLanguageIso.get(); }
 });
 
 Template.films.events({
@@ -81,7 +81,8 @@ Template.filterselect.helpers({
   genres() { return genres.get(); },
   dateDefaultValue() { return date.get(); },
   inputDefaultValue() { return searchInput.get(); },
-  languages() { return languages.get(); }
+  languages() { return languages.get(); },
+  preferedLanguageIso() { return preferedLanguageIso.get(); }
 })
 
 Template.filterselect.events({
@@ -146,8 +147,8 @@ Template.filterselect.events({
     }
   },
   'change #languages'(event) {
-    languages.set(event.target.value);
-    preferedLanguage.set(languages.get());
+    preferedLanguageIso.set(event.target.value);
+    updatePreferedLanguage(preferedLanguageIso.get());
     recupererTousLesFilms();
   }
 })
@@ -178,10 +179,8 @@ function recupererTousLesFilms() {
     dateActuelle = date.get(); 
     url += '&date=' + dateActuelle; 
   }
-  if (languages.get()) {
-    activeLanguage = preferedLanguage.get();
-    url += '&activeLanguage=' + activeLanguage;
-  }
+  activeLanguage = preferedLanguageIso.get();
+  url += '&activeLanguage=' + activeLanguage;
 
   HTTP.call(
     'GET',
@@ -195,15 +194,24 @@ function recupererTousLesFilms() {
   );
 }
 
+function recupererLangagePrefere() {
+  HTTP.call(
+    'GET',
+    'http://localhost:3000/api/favLanguage',
+    {},
+    (error, response) => { 
+      preferedLanguageIso.set(JSON.parse(response.content).langIso);
+      recupererTousLesFilms();
+    }
+  );
+}
+
 function recupererTousLesLangages() {
   HTTP.call(
     'GET',
     'http://localhost:3000/api/languages',
     {},
-    (error, response) => { 
-      console.log(JSON.parse(response.content));
-      languages.set(JSON.parse(response.content));
-    }
+    (error, response) => { languages.set(JSON.parse(response.content)); }
   );
 }
 
@@ -226,6 +234,15 @@ function recupererTousLesGenres() {
     'http://localhost:3000/api/genres',
     {},
     (error, response) => { genres.set(JSON.parse(response.content).genres); }
+  );
+}
+
+function updatePreferedLanguage(languageIso) {
+  HTTP.call(
+    'PUT',
+    'http://localhost:3000/api/languages?iso=' + languageIso,
+    {},
+    (error, response) => { preferedLanguageIso.set(JSON.parse(response.content).langIso); }
   );
 }
 

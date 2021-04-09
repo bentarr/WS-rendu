@@ -17,6 +17,11 @@ const urlLanguages = baseurl + 'configuration/languages?api_key=' + apikey;
 
 Meteor.startup(() => {});
 
+WebApp.connectHandlers.use('/api/favLanguage', (req, res, next) => {
+  res.writeHead(200);
+  res.end(JSON.stringify(Languages.findOne()));
+});
+
 WebApp.connectHandlers.use('/api/languages', (req, res, next) => {
   switch (req.method) {
     case 'GET':
@@ -26,22 +31,26 @@ WebApp.connectHandlers.use('/api/languages', (req, res, next) => {
         {},
         (error, response) => {
           let dbResp = response.data;
-          dbResp.forEach((language) => {
-            let languageInDb = Languages.findOne({ english_name: language.english_name });
-            if (!languageInDb) {
-              Languages.insert({ 
-                iso_639_1: language.iso_639_1,
-                english_name: language.english_name
-              });
-            }
-          });
           res.writeHead(200);
           res.end(JSON.stringify(dbResp));
         }
       );
       break;
     case 'PUT':
-
+      let params = urlSplit(req.originalUrl);
+      let languageIso = '';
+      params.forEach((param) => {
+        switch (param[0]) {
+          case 'iso':
+            languageIso = param[1];
+            break;
+          default:
+            break;
+        }
+      });
+      let newPreferedLanguage = updatePreferedLanguage(languageIso);
+      res.writeHead(200);
+      res.end(JSON.stringify(newPreferedLanguage));
       break;
     default:
       break;
@@ -193,6 +202,17 @@ function updateLikeMovie(idMovie) {
         like: 1 }
     );
   }
-
   return Like.findOne({ id: idMovie });
+}
+
+function updatePreferedLanguage(languageIso) {
+  let resource = Languages.findOne();
+  if (resource) {
+    Languages.update(
+      { langIso: resource.langIso },
+      { langIso: languageIso });
+  } else {
+    Languages.insert({ langIso: languageIso });
+  }
+  return Languages.findOne({ langIso: languageIso });
 }
