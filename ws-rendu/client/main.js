@@ -4,6 +4,8 @@ import { HTTP } from 'meteor/http';
 
 import './main.html';
 
+var preferedLanguage = new ReactiveVar();
+var languages = new ReactiveVar();
 var nbPages = new ReactiveVar();
 var movies = new ReactiveVar();
 var nbFilms = new ReactiveVar();
@@ -28,7 +30,8 @@ Template.films.onCreated(function filmsOnCreated() {
 
 Template.films.helpers({
   movies() { return movies.get(); },
-  doitSafficher() { return nbFilms.get() > 0; }
+  doitSafficher() { return nbFilms.get() > 0; },
+  preferedLanguage() { return preferedLanguage.get(); }
 });
 
 Template.films.events({
@@ -65,16 +68,20 @@ Template.pagination.events({
         recupererTousLesFilms();
       }
     }
-  },
-
+  }
 });
 
 // [Template] Filtres
 
+Template.filterselect.onCreated(function filtersOnCreated() {
+  recupererTousLesLangages();
+})
+
 Template.filterselect.helpers({
   genres() { return genres.get(); },
   dateDefaultValue() { return date.get(); },
-  inputDefaultValue() { return searchInput.get(); }
+  inputDefaultValue() { return searchInput.get(); },
+  languages() { return languages.get(); }
 })
 
 Template.filterselect.events({
@@ -137,6 +144,11 @@ Template.filterselect.events({
     } else {
       recupererTousLesFilms();
     }
+  },
+  'change #languages'(event) {
+    languages.set(event.target.value);
+    preferedLanguage.set(languages.get());
+    recupererTousLesFilms();
   }
 })
 
@@ -147,6 +159,7 @@ function recupererTousLesFilms() {
   let filtre = '';
   let genre = '';
   let dateActuelle = '';
+  let activeLanguage = '';
   let url = 'http://localhost:3000/api/films?page=' + pageActuelle;
 
   if (filtrePopulariteDecroissant.get()) { 
@@ -165,6 +178,10 @@ function recupererTousLesFilms() {
     dateActuelle = date.get(); 
     url += '&date=' + dateActuelle; 
   }
+  if (languages.get()) {
+    activeLanguage = preferedLanguage.get();
+    url += '&activeLanguage=' + activeLanguage;
+  }
 
   HTTP.call(
     'GET',
@@ -174,6 +191,18 @@ function recupererTousLesFilms() {
       movies.set(JSON.parse(response.content).results); 
       nbPages.set(JSON.parse(response.content).total_pages);
       nbFilms.set(JSON.parse(response.content).total_results);
+    }
+  );
+}
+
+function recupererTousLesLangages() {
+  HTTP.call(
+    'GET',
+    'http://localhost:3000/api/languages',
+    {},
+    (error, response) => { 
+      console.log(JSON.parse(response.content));
+      languages.set(JSON.parse(response.content));
     }
   );
 }

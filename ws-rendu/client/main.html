@@ -47,6 +47,7 @@
                 <p><b>Résumé :</b> {{ overview }}</p>
                 <p><b>Popularité :</b> {{ popularity }}</p>
                 <p><b>Date : </b> {{ release_date }}</p>
+                <p><b>Langage :</b> {{ original_language }}</p>
                 <button class="btn btn-info" data-id='{{ id }}'>Like : {{ like }}</button>
               </div>
             </div>
@@ -99,6 +100,13 @@
     <div id="filterform" class="col-md-2">
       <input class="form-control" type="text" id="search" placeholder="Filtrer par titre..." value='{{ inputDefaultValue }}'>
     </div>
-    <div class="col-md-4"></div> 
+    <div id="filterform" class="col-md-2">
+      <select id='languages' class='form-control'>
+        {{ #each languages }}
+        <option value='{{ iso_639_1 }}'>{{ english_name }}</option>
+        {{ /each }}
+      </select>
+    </div>
+    <div class="col-md-2"></div> 
   </div>
 </template>
