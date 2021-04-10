@@ -47,7 +47,7 @@
                 <p><b>Résumé :</b> {{ overview }}</p>
                 <p><b>Popularité :</b> {{ popularity }}</p>
                 <p><b>Date : </b> {{ release_date }}</p>
-                <p><b>Langage :</b> {{ preferedLanguageIso }}</p>
+                <p><b>Langage :</b> {{ preferedLanguageName }}</p>
                 <button class="btn btn-info" data-id='{{ id }}'>Like : {{ like }}</button>
               </div>
             </div>
@@ -104,9 +104,9 @@
     <div id="filterform" class="input-group col-md-2">
       <label class="input-group-text" for="languages">Langage par défaut</label>
       <select id='languages' class="form-select">
-        <option value='{{ preferedLanguageIso }}'>{{ preferedLanguageIso }}</option>
+        <option value='{{ preferedLanguageIso }}' label='{{ preferedLanguageName }}'>{{ preferedLanguageName }}</option>
         {{ #each languages }}
-        <option value='{{ iso_639_1 }}'>{{ english_name }}</option>
+        <option value='{{ iso_639_1 }}' label='{{ english_name }}'>{{ english_name }}</option>
         {{ /each }}
       </select>
     </div>

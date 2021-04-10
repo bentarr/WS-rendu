@@ -39,16 +39,20 @@ WebApp.connectHandlers.use('/api/languages', (req, res, next) => {
     case 'PUT':
       let params = urlSplit(req.originalUrl);
       let languageIso = '';
+      let languageName = '';
       params.forEach((param) => {
         switch (param[0]) {
           case 'iso':
             languageIso = param[1];
             break;
+          case 'name':
+            languageName = param[1];
+            break;
           default:
             break;
         }
       });
-      let newPreferedLanguage = updatePreferedLanguage(languageIso);
+      let newPreferedLanguage = updatePreferedLanguage(languageIso, languageName);
       res.writeHead(200);
       res.end(JSON.stringify(newPreferedLanguage));
       break;
@@ -205,14 +209,14 @@ function updateLikeMovie(idMovie) {
   return Like.findOne({ id: idMovie });
 }
 
-function updatePreferedLanguage(languageIso) {
+function updatePreferedLanguage(languageIso, languageName) {
   let resource = Languages.findOne();
   if (resource) {
     Languages.update(
       { langIso: resource.langIso },
-      { langIso: languageIso });
+      { langIso: languageIso, langName: languageName });
   } else {
-    Languages.insert({ langIso: languageIso });
+    Languages.insert({ langIso: languageIso, langName: languageName });
   }
-  return Languages.findOne({ langIso: languageIso });
+  return Languages.findOne();
 }

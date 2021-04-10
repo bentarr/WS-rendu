@@ -5,6 +5,7 @@ import { HTTP } from 'meteor/http';
 import './main.html';
 
 var preferedLanguageIso = new ReactiveVar();
+var preferedLanguageName = new ReactiveVar();
 var languages = new ReactiveVar();
 var nbPages = new ReactiveVar();
 var movies = new ReactiveVar();
@@ -31,7 +32,8 @@ Template.films.onCreated(function filmsOnCreated() {
 Template.films.helpers({
   movies() { return movies.get(); },
   doitSafficher() { return nbFilms.get() > 0; },
-  preferedLanguageIso() { return preferedLanguageIso.get(); }
+  preferedLanguageIso() { return preferedLanguageIso.get(); },
+  preferedLanguageName() { return preferedLanguageName.get(); }
 });
 
 Template.films.events({
@@ -82,7 +84,8 @@ Template.filterselect.helpers({
   dateDefaultValue() { return date.get(); },
   inputDefaultValue() { return searchInput.get(); },
   languages() { return languages.get(); },
-  preferedLanguageIso() { return preferedLanguageIso.get(); }
+  preferedLanguageIso() { return preferedLanguageIso.get(); },
+  preferedLanguageName() { return preferedLanguageName.get(); }
 })
 
 Template.filterselect.events({
@@ -148,7 +151,8 @@ Template.filterselect.events({
   },
   'change #languages'(event) {
     preferedLanguageIso.set(event.target.value);
-    updatePreferedLanguage(preferedLanguageIso.get());
+    preferedLanguageName.set($('#languages option:selected').text());
+    updatePreferedLanguage(preferedLanguageIso.get(), preferedLanguageName.get());
     recupererTousLesFilms();
   }
 })
@@ -201,6 +205,7 @@ function recupererLangagePrefere() {
     {},
     (error, response) => { 
       preferedLanguageIso.set(JSON.parse(response.content).langIso);
+      preferedLanguageName.set(JSON.parse(response.content).langName);
       recupererTousLesFilms();
     }
   );
@@ -237,12 +242,15 @@ function recupererTousLesGenres() {
   );
 }
 
-function updatePreferedLanguage(languageIso) {
+function updatePreferedLanguage(languageIso, languageName) {
   HTTP.call(
     'PUT',
-    'http://localhost:3000/api/languages?iso=' + languageIso,
+    'http://localhost:3000/api/languages?iso=' + languageIso + '&name=' + languageName,
     {},
-    (error, response) => { preferedLanguageIso.set(JSON.parse(response.content).langIso); }
+    (error, response) => { 
+      preferedLanguageIso.set(JSON.parse(response.content).langIso); 
+      preferedLanguageName.set(JSON.parse(response.content).langName);
+    }
   );
 }
 
