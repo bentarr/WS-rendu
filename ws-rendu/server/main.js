@@ -5,6 +5,7 @@ import { Mongo } from 'meteor/mongo'
 import { SERVER_CONFIG } from './server-config.js';
 
 const Like = new Mongo.Collection('like');
+const Languages = new Mongo.Collection('languages');
 
 let baseurl = SERVER_CONFIG.themoviedb_api_config.base_url;
 let apikey = SERVER_CONFIG.themoviedb_api_config.api_key;
@@ -12,8 +13,53 @@ let language = SERVER_CONFIG.themoviedb_api_config.language;
 const urlDeBase = baseurl + 'discover/movie?api_key=' + apikey + '&language=' + language;
 const urlGenres = baseurl + 'genre/movie/list?api_key=' + apikey + '&language=' + language;
 const urlSearch = baseurl + 'search/movie?api_key=' + apikey + '&language=' + language;
+const urlLanguages = baseurl + 'configuration/languages?api_key=' + apikey;
 
 Meteor.startup(() => {});
+
+WebApp.connectHandlers.use('/api/favLanguage', (req, res, next) => {
+  res.writeHead(200);
+  res.end(JSON.stringify(Languages.findOne()));
+});
+
+WebApp.connectHandlers.use('/api/languages', (req, res, next) => {
+  switch (req.method) {
+    case 'GET':
+      HTTP.call(
+        'GET',
+        urlLanguages,
+        {},
+        (error, response) => {
+          let dbResp = response.data;
+          res.writeHead(200);
+          res.end(JSON.stringify(dbResp));
+        }
+      );
+      break;
+    case 'PUT':
+      let params = urlSplit(req.originalUrl);
+      let languageIso = '';
+      let languageName = '';
+      params.forEach((param) => {
+        switch (param[0]) {
+          case 'iso':
+            languageIso = param[1];
+            break;
+          case 'name':
+            languageName = param[1];
+            break;
+          default:
+            break;
+        }
+      });
+      let newPreferedLanguage = updatePreferedLanguage(languageIso, languageName);
+      res.writeHead(200);
+      res.end(JSON.stringify(newPreferedLanguage));
+      break;
+    default:
+      break;
+  }
+});
 
 WebApp.connectHandlers.use('/api/genres', (req, res, next) => {
   HTTP.call(
@@ -81,6 +127,7 @@ WebApp.connectHandlers.use('/api/films', (req, res, next) => {
   let filtre = '';
   let genre = '';
   let date = '';
+  let activeLanguage = '';
   let params = urlSplit(req.originalUrl);
   let urlFinal = urlDeBase;
 
@@ -111,6 +158,10 @@ WebApp.connectHandlers.use('/api/films', (req, res, next) => {
       case 'date':
         date = param[1];
         urlFinal += '&primary_release_year=' + date;
+        break;
+      case 'activeLanguage':
+        activeLanguage = param[1];
+        urlFinal += '&with_original_language=' + activeLanguage;
         break;
       default:
         break;
@@ -155,6 +206,17 @@ function updateLikeMovie(idMovie) {
         like: 1 }
     );
   }
-
   return Like.findOne({ id: idMovie });
+}
+
+function updatePreferedLanguage(languageIso, languageName) {
+  let resource = Languages.findOne();
+  if (resource) {
+    Languages.update(
+      { langIso: resource.langIso },
+      { langIso: languageIso, langName: languageName });
+  } else {
+    Languages.insert({ langIso: languageIso, langName: languageName });
+  }
+  return Languages.findOne();
 }
