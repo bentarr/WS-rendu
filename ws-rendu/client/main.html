@@ -104,9 +104,9 @@
     <div id="filterform" class="input-group col-md-2">
       <label class="input-group-text" for="languages">Langage par défaut</label>
       <select id='languages' class="form-select">
-        <option value='{{ preferedLanguageIso }}' label='{{ preferedLanguageName }}'>{{ preferedLanguageName }}</option>
+        <option value='{{ preferedLanguageIso }}'>{{ preferedLanguageName }}</option>
         {{ #each languages }}
-        <option value='{{ iso_639_1 }}' label='{{ english_name }}'>{{ english_name }}</option>
+        <option value='{{ iso_639_1 }}'>{{ english_name }}</option>
         {{ /each }}
       </select>
     </div>
