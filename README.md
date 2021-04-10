@@ -1,6 +1,8 @@
 # WS-rendu
 [EPSI] Projet du module webservices
 
+Désolé pour le franglais, on fera plus attention la prochaine fois 😁
+
 # Création application
 	meteor create myapp --blaze (ou autre) -> création du projet
 	cd myapp
