@@ -18,6 +18,9 @@ const urlLanguages = baseurl + 'configuration/languages?api_key=' + apikey;
 Meteor.startup(() => {});
 
 WebApp.connectHandlers.use('/api/favLanguage', (req, res, next) => {
+  if (!Languages.findOne()) {
+    Languages.insert({ langIso: 'fr', langName: 'French' });
+  }
   res.writeHead(200);
   res.end(JSON.stringify(Languages.findOne()));
 });
@@ -122,6 +125,13 @@ WebApp.connectHandlers.use('/api/search', (req, res, next) => {
   );
 });
 
+/**
+ * Étant donné qu'à chaque nouvelle fonctionnalité de filtrage, on devait rajouter entre 
+ * 2 et 5 fonctions pour gérer les filtrages multiples, nous avons décidé de tout refactoriser
+ * pour avoir une fonction qui les gère tous, peu importe l'ordre/le nombre de filtres
+ * 
+ * D'où la fonction urlSplit(url) qui permet de récupérer les paramètres de l'url
+ * */
 WebApp.connectHandlers.use('/api/films', (req, res, next) => {
   let page = '';
   let filtre = '';

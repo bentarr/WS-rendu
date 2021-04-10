@@ -25,8 +25,8 @@ var filtreSearch = new ReactiveVar(false);
 // [Template] Films
 
 Template.films.onCreated(function filmsOnCreated() {
-  recupererLangagePrefere();
   recupererTousLesGenres();
+  recupererLangagePrefere();
 });
 
 Template.films.helpers({
@@ -203,7 +203,7 @@ function recupererLangagePrefere() {
     'GET',
     'http://localhost:3000/api/favLanguage',
     {},
-    (error, response) => { 
+    (error, response) => {
       preferedLanguageIso.set(JSON.parse(response.content).langIso);
       preferedLanguageName.set(JSON.parse(response.content).langName);
       recupererTousLesFilms();
