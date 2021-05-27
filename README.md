@@ -1,5 +1,5 @@
 # WS-rendu
-[EPSI] Projet du module webservices
+[EPSI] Projet du module webservice
 
 Désolé pour le franglais, on fera plus attention la prochaine fois 😁
 
